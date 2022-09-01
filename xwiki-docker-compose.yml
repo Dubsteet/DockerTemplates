@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  xwiki-mysql-tomcat-web:
+    image: "xwiki:lts-mysql-tomcat"
+    container_name: xwiki-mysql-tomcat-web
+    depends_on:
+      - xwiki-mysql-db
+    ports:
+      - "80:8080"
+    environment:
+      - DB_USER=xwiki
+      - DB_PASSWORD=xwiki
+      - DB_HOST=xwiki-mysql-db
+    volumes:
+      - ./data/xwiki:/usr/local/xwiki
+    networks:
+      - xwiki_net
+  xwiki-mysql-db:
+    image: "mysql:5.7"
+    container_name: xwiki-mysql-db
+    volumes:
+      - ./data/xwiki.cnf:/etc/mysql/conf.d/xwiki.cnf
+      - ./data/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=xwiki
+      - MYSQL_USER=xwiki
+      - MYSQL_PASSWORD=xwiki
+      - MYSQL_DATABASE=xwiki
+    networks:
+      - xwiki_net
+networks:
+  xwiki_net:
+    name: xwiki_net
+    external: true
